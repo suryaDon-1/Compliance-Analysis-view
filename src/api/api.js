@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // instnce 
 const api =axios.create({
-    baseURL: "http://localhost:5000/api", // backend api
+    baseURL: "https://compliance-analysis-api.onrender.com/api", // backend api
     withCredentials: true // for cookies 
 });
 //request intersceptor 

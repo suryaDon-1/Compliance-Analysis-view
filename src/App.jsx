@@ -11,7 +11,7 @@ import Signup from "./Pages/auth/Signup.jsx";
 import Signin from "./Pages/auth/Signin.jsx";
 import ProtectedRoute from "./Pages/auth/ProtectedRoute.jsx";
 import Logout from "./Pages/auth/Logout.jsx";
-import AddProducts from "./Components/AddProducts.jsx";
+import AddProducts from "./Components/product/AddProducts.jsx";
 import AddOrganization from "./Components/AddOrganization.jsx";
 function App() {
   const router = createBrowserRouter([

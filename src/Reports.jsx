@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import {useEffect, useState} from "react";
+
+
 
 import {
-  FileText,
-  X,
-  Loader2,
-  ShieldCheck,
-  TrendingUp,
-  ClipboardCheck,
-  CalendarDays,
-  ChevronRight,
-  Sparkles,
-} from "lucide-react";
+  Assessment,
+  Shield,
+  ArrowBack,
+  CheckCircle,
+  Cancel,
+  WarningAmber,
+} from "@mui/icons-material";
 
-const Reports = () => {
+import ReactMarkdown from "react-markdown";
+
+import remarkGfm from "remark-gfm";
+import api from "./api/api.js";
+
+export default function Reports() {
   const [reports, setReports] = useState([]);
+
   const [loading, setLoading] = useState(true);
-  const [selectedReport, setSelectedReport] =
-    useState(null);
+
+  const [selectedReport, setSelectedReport] = useState(null);
 
   useEffect(() => {
     fetchReports();
@@ -28,17 +29,15 @@ const Reports = () => {
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/complince/get-reports",
-        {
-          withCredentials: true,
-        }
-      );
+      setLoading(true);
+
+      const response = await api.get("/complince/get-reports");
 
       setReports(response.data?.data || []);
     } catch (error) {
-      console.error(error);
-      toast.error("Failed to load reports");
+      console.log(error);
+
+      alert("Failed to load reports");
     } finally {
       setLoading(false);
     }
@@ -46,515 +45,292 @@ const Reports = () => {
 
   const getScoreStyles = (score) => {
     if (score >= 90) {
-      return `
-        bg-emerald-500/10 
-        text-emerald-600 
-        border border-emerald-500/20
-        dark:bg-emerald-500/15
-        dark:text-emerald-400
-      `;
+      return {
+        bg: "bg-green-100 dark:bg-green-500/20",
+        text: "text-green-700 dark:text-green-300",
+      };
     }
 
     if (score >= 75) {
-      return `
-        bg-amber-500/10 
-        text-amber-600 
-        border border-amber-500/20
-        dark:bg-amber-500/15
-        dark:text-amber-400
-      `;
+      return {
+        bg: "bg-yellow-100 dark:bg-yellow-500/20",
+        text: "text-yellow-700 dark:text-yellow-300",
+      };
     }
 
-    return `
-      bg-red-500/10 
-      text-red-600 
-      border border-red-500/20
-      dark:bg-red-500/15
-      dark:text-red-400
-    `;
+    return {
+      bg: "bg-red-100 dark:bg-red-500/20",
+      text: "text-red-700 dark:text-red-300",
+    };
   };
 
-  const getProgressColor = (score) => {
-    if (score >= 90)
-      return "from-emerald-500 to-green-400";
+  const getStatusIcon = (status) => {
+    if (status === "pass") {
+      return <CheckCircle className="text-green-500" />;
+    }
 
-    if (score >= 75)
-      return "from-amber-500 to-yellow-400";
+    if (status === "partial") {
+      return <WarningAmber className="text-yellow-500" />;
+    }
 
-    return "from-red-500 to-rose-400";
+    return <Cancel className="text-red-500" />;
   };
 
+  // Stats
   const totalReports = reports.length;
 
   const avgScore =
     reports.length > 0
       ? Math.round(
-          reports.reduce(
-            (acc, r) => acc + r.complianceScore,
-            0
-          ) / reports.length
+          reports.reduce((acc, r) => acc + r.complianceScore, 0) /
+            reports.length,
         )
       : 0;
 
-  const compliantCount = reports.filter(
-    (r) => r.complianceScore >= 90
-  ).length;
+  const compliantCount = reports.filter((r) => r.complianceScore >= 90).length;
 
-  return (
-    <div className="min-h-screen bg-gray-100 dark:bg-[#020617] text-gray-900 dark:text-white transition-colors duration-300">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* HERO */}
-        <div className="relative overflow-hidden rounded-[32px] border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0B1120] shadow-sm mb-8">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-indigo-500/5 to-purple-500/5" />
+  // =========================
+  // SINGLE REPORT PAGE
+  // =========================
+  if (selectedReport) {
+    const scoreStyle = getScoreStyles(selectedReport.complianceScore);
 
-          <div className="relative z-10 p-6 sm:p-8 lg:p-10">
-            <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-8">
-              {/* LEFT */}
-              <div className="max-w-3xl">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-sm font-medium mb-5">
-                  <Sparkles className="w-4 h-4" />
-                  AI Powered Compliance System
-                </div>
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-900 dark:text-white p-6">
+        {/* Back */}
+        <button
+          onClick={() => setSelectedReport(null)}
+          className="flex items-center gap-2 mb-8 px-5 py-3 rounded-2xl bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 hover:shadow-md transition"
+        >
+          <ArrowBack />
+          Back to Reports
+        </button>
 
-                <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
-                  Compliance Reports
+        {/* Header */}
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl p-8 mb-8 shadow-sm">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="flex items-start gap-5">
+              <div className="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center">
+                <Shield className="text-blue-600 dark:text-blue-300" />
+              </div>
+
+              <div>
+                <h1 className="text-3xl font-bold mb-2">
+                  {selectedReport.product?.productName}
                 </h1>
 
-                <p className="mt-5 text-base sm:text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
-                  Track, analyze, and review all
-                  compliance reports generated by your
-                  AI engine with a modern enterprise
-                  dashboard experience.
+                <p className="text-gray-500 dark:text-slate-400">
+                  {selectedReport.framework?.name} (
+                  {selectedReport.framework?.shortCode})
+                </p>
+
+                <p className="text-sm text-gray-400 mt-2">
+                  Generated on{" "}
+                  {new Date(selectedReport.createdAt).toLocaleString()}
                 </p>
               </div>
+            </div>
 
-              {/* RIGHT */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-4 w-full xl:w-[320px]">
-                {/* TOTAL */}
-                <div className="rounded-3xl bg-gray-50 dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-5">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Total Reports
-                      </p>
-
-                      <h2 className="text-3xl font-black mt-2">
-                        {loading
-                          ? "..."
-                          : totalReports}
-                      </h2>
-                    </div>
-
-                    <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
-                      <FileText className="w-6 h-6 text-blue-500" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* AVG */}
-                <div className="rounded-3xl bg-gray-50 dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-5">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Avg Score
-                      </p>
-
-                      <h2 className="text-3xl font-black mt-2 text-emerald-500">
-                        {loading
-                          ? "..."
-                          : `${avgScore}%`}
-                      </h2>
-                    </div>
-
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 text-emerald-500" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* COMPLIANT */}
-                <div className="rounded-3xl bg-gray-50 dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-5">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Highly Compliant
-                      </p>
-
-                      <h2 className="text-3xl font-black mt-2 text-purple-500">
-                        {loading
-                          ? "..."
-                          : compliantCount}
-                      </h2>
-                    </div>
-
-                    <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center">
-                      <ClipboardCheck className="w-6 h-6 text-purple-500" />
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div
+              className={`px-6 py-3 rounded-2xl text-xl font-bold ${scoreStyle.bg} ${scoreStyle.text}`}
+            >
+              {selectedReport.complianceScore}%
             </div>
           </div>
         </div>
 
-        {/* SECTION HEADER */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold">
-              Recent Reports
-            </h2>
+        {/* Summary */}
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl p-6 mb-8 shadow-sm">
+          <h2 className="text-2xl font-bold mb-4">Executive Summary</h2>
 
-            <p className="text-gray-500 dark:text-gray-400 mt-1">
-              Select a report to view detailed analysis
-            </p>
-          </div>
+          <p className="text-gray-700 dark:text-slate-300 leading-7">
+            {selectedReport.summary}
+          </p>
         </div>
 
-        {/* LOADING */}
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-28">
-            <Loader2 className="w-12 h-12 animate-spin text-blue-500" />
+        {/* Recommendations */}
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl p-6 mb-8 shadow-sm">
+          <h2 className="text-2xl font-bold mb-5">Recommendations</h2>
 
-            <p className="mt-4 text-gray-500 dark:text-gray-400">
-              Loading reports...
-            </p>
-          </div>
-        ) : reports.length === 0 ? (
-          <div className="rounded-[32px] border border-dashed border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0B1120] p-16 text-center">
-            <div className="w-24 h-24 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-6">
-              <FileText className="w-12 h-12 text-gray-400" />
-            </div>
-
-            <h3 className="text-2xl font-bold mb-3">
-              No Reports Found
-            </h3>
-
-            <p className="text-gray-500 dark:text-gray-400">
-              Generated reports will appear here.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6">
-            {reports.map((report) => (
+          <div className="space-y-4">
+            {selectedReport.recommendations?.map((item, index) => (
               <div
-                key={report._id}
-                onClick={() => setSelectedReport(report)}
-                className="
-                  group
-                  relative
-                  overflow-hidden
-                  rounded-[30px]
-                  border
-                  border-gray-200
-                  dark:border-gray-800
-                  bg-white
-                  dark:bg-[#0B1120]
-                  hover:border-blue-500/30
-                  shadow-sm
-                  hover:shadow-2xl
-                  transition-all
-                  duration-300
-                  cursor-pointer
-                "
+                key={index}
+                className="p-4 rounded-2xl bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700"
               >
-                {/* GLOW */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-cyan-500/5" />
-
-                <div className="relative z-10 p-6 flex flex-col h-full">
-                  {/* TOP */}
-                  <div className="flex items-start justify-between gap-4 mb-6">
-                    <div className="min-w-0">
-                      <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-4">
-                        <ShieldCheck className="w-7 h-7 text-blue-500" />
-                      </div>
-
-                      <h3 className="text-xl font-bold leading-tight line-clamp-2">
-                        {report.product?.productName ||
-                          "Unknown Product"}
-                      </h3>
-
-                      <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                        {report.framework?.name}
-                      </p>
-                    </div>
-
-                    <div
-                      className={`shrink-0 px-4 py-2 rounded-2xl text-sm font-bold ${getScoreStyles(
-                        report.complianceScore
-                      )}`}
-                    >
-                      {report.complianceScore}%
-                    </div>
-                  </div>
-
-                  {/* PROGRESS */}
-                  <div className="mb-6">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        Compliance Score
-                      </span>
-
-                      <span className="text-sm font-semibold">
-                        {report.complianceScore}%
-                      </span>
-                    </div>
-
-                    <div className="h-3 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
-                      <div
-                        className={`h-full rounded-full bg-gradient-to-r ${getProgressColor(
-                          report.complianceScore
-                        )}`}
-                        style={{
-                          width: `${report.complianceScore}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* INFO */}
-                  <div className="space-y-3 mb-6">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500 dark:text-gray-400">
-                        Framework
-                      </span>
-
-                      <span className="font-semibold">
-                        {
-                          report.framework
-                            ?.shortCode
-                        }
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-sm gap-4">
-                      <span className="text-gray-500 dark:text-gray-400">
-                        Generated
-                      </span>
-
-                      <span className="font-medium text-right">
-                        {new Date(
-                          report.createdAt
-                        ).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* FOOTER */}
-                  <div className="mt-auto pt-5 border-t border-gray-200 dark:border-gray-800 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                      <CalendarDays className="w-4 h-4" />
-
-                      <span>
-                        {new Date(
-                          report.createdAt
-                        ).toLocaleTimeString()}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-1 text-blue-500 font-semibold text-sm">
-                      View Report
-
-                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </div>
+                {item}
               </div>
             ))}
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* MODAL */}
-      {selectedReport && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex justify-end">
-          {/* PANEL */}
+        {/* Controls Analysis */}
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl p-6 mb-8 shadow-sm">
+          <h2 className="text-2xl font-bold mb-6">Controls Analysis</h2>
+
+          <div className="space-y-5">
+            {selectedReport.analysis?.map((control, index) => (
+              <div
+                key={index}
+                className="border border-gray-200 dark:border-slate-700 rounded-2xl p-5"
+              >
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div>
+                    <h3 className="font-bold text-lg">{control.title}</h3>
+
+                    <p className="text-sm text-gray-500">{control.controlId}</p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon(control.status)}
+
+                    <span className="capitalize font-semibold">
+                      {control.status}
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-gray-700 dark:text-slate-300 leading-7">
+                  {control.reason}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Markdown Report */}
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl p-8 shadow-sm">
+          <h2 className="text-2xl font-bold mb-6">Detailed AI Report</h2>
+
           <div
             className="
-              w-full
-              lg:w-[75%]
-              xl:w-[70%]
-              2xl:w-[65%]
-              h-full
-              bg-white
-              dark:bg-[#020617]
-              border-l
-              border-gray-200
-              dark:border-gray-800
-              shadow-2xl
-              animate-slideIn
-              flex
-              flex-col
+              prose
+              prose-lg
+              dark:prose-invert
+              max-w-none
+              break-words
             "
           >
-            {/* HEADER */}
-            <div className="sticky top-0 z-20 border-b border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-[#020617]/90 backdrop-blur-xl">
-              <div className="p-5 sm:p-7">
-                <div className="flex items-start justify-between gap-4">
-                  {/* LEFT */}
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-3 mb-4">
-                      <span
-                        className={`px-4 py-2 rounded-2xl text-sm font-bold ${getScoreStyles(
-                          selectedReport.complianceScore
-                        )}`}
-                      >
-                        {
-                          selectedReport.complianceScore
-                        }
-                        % Score
-                      </span>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {selectedReport.reportMarkdown}
+            </ReactMarkdown>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-                      <span className="px-4 py-2 rounded-2xl text-sm bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-                        {
-                          selectedReport.framework
-                            ?.shortCode
-                        }
-                      </span>
-                    </div>
+  // =========================
+  // REPORT LIST PAGE
+  // =========================
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-[#0f172a] text-gray-900 dark:text-white p-6">
+      {/* Header */}
+      <div className="mb-10">
+        <div className="flex items-center gap-4 mb-3">
+          <div className="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center">
+            <Assessment className="text-blue-600 dark:text-blue-300" />
+          </div>
 
-                    <h2 className="text-2xl sm:text-4xl font-black leading-tight break-words">
-                      {
-                        selectedReport.product
-                          ?.productName
-                      }
-                    </h2>
+          <div>
+            <h1 className="text-4xl font-bold">Compliance Reports</h1>
 
-                    <p className="mt-3 text-gray-500 dark:text-gray-400 text-sm sm:text-base">
-                      {
-                        selectedReport.framework
-                          ?.name
-                      }{" "}
-                      • Generated on{" "}
-                      {new Date(
-                        selectedReport.createdAt
-                      ).toLocaleString()}
+            <p className="text-gray-500 dark:text-slate-400 mt-1">
+              Historical AI-generated compliance reports.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid md:grid-cols-3 gap-6 mb-10">
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl p-6 shadow-sm">
+          <h2 className="text-4xl font-bold">
+            {loading ? "..." : totalReports}
+          </h2>
+
+          <p className="text-gray-500 dark:text-slate-400 mt-2">
+            Total Reports
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl p-6 shadow-sm">
+          <h2 className="text-4xl font-bold">
+            {loading ? "..." : `${avgScore}%`}
+          </h2>
+
+          <p className="text-gray-500 dark:text-slate-400 mt-2">
+            Average Compliance Score
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl p-6 shadow-sm">
+          <h2 className="text-4xl font-bold">
+            {loading ? "..." : compliantCount}
+          </h2>
+
+          <p className="text-gray-500 dark:text-slate-400 mt-2">
+            Highly Compliant Products
+          </p>
+        </div>
+      </div>
+
+      {/* Reports */}
+      {loading ? (
+        <div className="flex justify-center items-center h-72">
+          <div className="w-14 h-14 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      ) : reports.length === 0 ? (
+        <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl p-12 text-center">
+          <h3 className="text-2xl font-bold mb-3">No Reports Found</h3>
+
+          <p className="text-gray-500 dark:text-slate-400">
+            Generate your first compliance report.
+          </p>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {reports.map((report) => {
+            const scoreStyle = getScoreStyles(report.complianceScore);
+
+            return (
+              <div
+                key={report._id}
+                onClick={() => setSelectedReport(report)}
+                className="cursor-pointer bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition"
+              >
+                <div className="flex items-start justify-between mb-5">
+                  <div>
+                    <h3 className="text-xl font-bold mb-2">
+                      {report.product?.productName}
+                    </h3>
+
+                    <p className="text-sm text-gray-500 dark:text-slate-400">
+                      {report.framework?.name} ({report.framework?.shortCode})
                     </p>
                   </div>
 
-                  {/* CLOSE */}
-                  <button
-                    onClick={() =>
-                      setSelectedReport(null)
-                    }
-                    className="
-                      shrink-0
-                      w-12
-                      h-12
-                      rounded-2xl
-                      bg-gray-100
-                      hover:bg-gray-200
-                      dark:bg-gray-800
-                      dark:hover:bg-gray-700
-                      flex
-                      items-center
-                      justify-center
-                      transition
-                    "
+                  <div
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${scoreStyle.bg} ${scoreStyle.text}`}
                   >
-                    <X className="w-6 h-6" />
-                  </button>
+                    {report.complianceScore}%
+                  </div>
+                </div>
+
+                <p className="text-sm text-gray-600 dark:text-slate-400 line-clamp-3 mb-4">
+                  {report.summary}
+                </p>
+
+                <div className="border-t border-gray-200 dark:border-slate-700 pt-4">
+                  <p className="text-sm text-gray-500 dark:text-slate-400">
+                    {new Date(report.createdAt).toLocaleString()}
+                  </p>
                 </div>
               </div>
-            </div>
-
-            {/* CONTENT */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="max-w-5xl mx-auto px-5 sm:px-8 py-8">
-                <div
-                  className="
-                    prose
-                    prose-sm
-                    sm:prose-base
-                    lg:prose-lg
-                    dark:prose-invert
-                    max-w-none
-
-                    prose-headings:font-black
-                    prose-headings:text-gray-900
-                    dark:prose-headings:text-white
-
-                    prose-p:text-gray-700
-                    dark:prose-p:text-gray-300
-
-                    prose-strong:text-gray-900
-                    dark:prose-strong:text-white
-
-                    prose-code:text-pink-500
-                    prose-code:bg-gray-100
-                    dark:prose-code:bg-gray-800
-                    prose-code:px-2
-                    prose-code:py-1
-                    prose-code:rounded-md
-
-                    prose-pre:bg-[#0F172A]
-                    prose-pre:border
-                    prose-pre:border-gray-800
-
-                    prose-blockquote:border-blue-500
-                    prose-blockquote:bg-blue-500/5
-                    prose-blockquote:px-4
-                    prose-blockquote:py-2
-                    prose-blockquote:rounded-xl
-                  "
-                >
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm]}
-                  >
-                    {selectedReport.reportText}
-                  </ReactMarkdown>
-                </div>
-              </div>
-            </div>
-
-            {/* FOOTER */}
-            <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-[#020617] p-5 flex justify-end">
-              <button
-                onClick={() =>
-                  setSelectedReport(null)
-                }
-                className="
-                  w-full
-                  sm:w-auto
-                  px-7
-                  py-3.5
-                  rounded-2xl
-                  bg-blue-600
-                  hover:bg-blue-700
-                  text-white
-                  font-semibold
-                  transition
-                  shadow-lg
-                  shadow-blue-500/20
-                "
-              >
-                Close Report
-              </button>
-            </div>
-          </div>
+            );
+          })}
         </div>
       )}
-
-      {/* CUSTOM ANIMATION */}
-      <style>
-        {`
-          @keyframes slideIn {
-            from {
-              transform: translateX(100%);
-              opacity: 0;
-            }
-            to {
-              transform: translateX(0%);
-              opacity: 1;
-            }
-          }
-
-          .animate-slideIn {
-            animation: slideIn 0.35s ease forwards;
-          }
-        `}
-      </style>
     </div>
   );
-};
-
-export default Reports;
+}

@@ -322,7 +322,7 @@ const Organizations = () => {
                           </p>
                         </div>
 
-                        <div
+                        {/* <div
                           className={`px-5 py-2 rounded-xl text-sm font-semibold border w-fit ${
                             prod.complianceStatus === "compliant"
                               ? "bg-green-500/10 text-green-500 border-green-500/20"
@@ -330,7 +330,7 @@ const Organizations = () => {
                           }`}
                         >
                           {prod.complianceStatus}
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   ))}

@@ -39,17 +39,17 @@ const Dashboard = () => {
         productsRes,
       ] = await Promise.all([
         axios.get(
-          "http://localhost:5000/api/complince/get-reports",
+          "https://compliance-analysis-api.onrender.com/api/complince/get-reports",
           { withCredentials: true }
         ),
 
         axios.get(
-          "http://localhost:5000/api/framework/get",
+          "https://compliance-analysis-api.onrender.com/api/framework/get",
           { withCredentials: true }
         ),
 
         axios.get(
-          "http://localhost:5000/api/product/getAllproducts",
+          "https://compliance-analysis-api.onrender.com/api/product/getAllproducts",
           { withCredentials: true }
         ),
       ]);

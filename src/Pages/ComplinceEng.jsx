@@ -20,10 +20,10 @@ const ComplianceEngine = () => {
   const fetchData = async () => {
     try {
       const [productRes, frameworkRes] = await Promise.all([
-        axios.get("http://localhost:5000/api/product/getAllproducts", {
+        axios.get("https://compliance-analysis-api.onrender.com/api/product/getAllproducts", {
           withCredentials: true,
         }),
-        axios.get("http://localhost:5000/api/framework/get", {
+        axios.get("https://compliance-analysis-api.onrender.com/api/framework/get", {
           withCredentials: true,
         }),
       ]);
@@ -47,7 +47,7 @@ const ComplianceEngine = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/complince/analyze",
+        "https://compliance-analysis-api.onrender.com/api/complince/analyze",
         {
           productId: selectedProduct,
           frameworkId: selectedFramework,

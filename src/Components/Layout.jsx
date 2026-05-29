@@ -11,7 +11,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 // import CorporateFareIcon from '@mui/icons-material/CorporateFare';
 // import AssessmentIcon from '@mui/icons-material/Assessment';
 // import CategoryIcon from '@mui/icons-material/Category';
-import GetNavigation from './getNavigation.jsx';
+import GetNavigation from './GetNavigation.jsx';
 import { useAuth } from '../context/context.jsx';
 import { useColorScheme } from "@mui/material/styles";
 import { useEffect } from 'react';

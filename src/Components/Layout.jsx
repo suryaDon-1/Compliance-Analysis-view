@@ -1,16 +1,9 @@
-//import * as React from 'react';
-// import DashboardIcon from '@mui/icons-material/Dashboard';
-// import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-// import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-// import EngineeringIcon from '@mui/icons-material/Engineering';
-// import PolicyIcon from '@mui/icons-material/Policy';
-// import CorporateFareIcon from '@mui/icons-material/CorporateFare';
-// import AssessmentIcon from '@mui/icons-material/Assessment';
-// import CategoryIcon from '@mui/icons-material/Category';
+
 import GetNavigation from './GetNavigation.jsx';
 import { useAuth } from '../context/context.jsx';
 import { useColorScheme } from "@mui/material/styles";

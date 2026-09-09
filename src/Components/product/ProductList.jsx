@@ -1,10 +1,4 @@
-import {
-  Search,
-  Plus,
-  Loader2,
-  Package,
-  Building2,
-} from "lucide-react";
+import { Search, Plus, Loader2, Package, Building2 } from "lucide-react";
 
 export default function ProductList({
   products,
@@ -29,8 +23,7 @@ export default function ProductList({
             </h1>
 
             <p className="text-gray-500 dark:text-gray-400 mt-3 text-lg">
-              Enterprise inventory
-              management system
+              Enterprise inventory management system
             </p>
           </div>
 
@@ -85,11 +78,7 @@ export default function ProductList({
               type="text"
               placeholder="Search products..."
               value={searchQuery}
-              onChange={(e) =>
-                setSearchQuery(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="
                 w-full
                 bg-transparent
@@ -102,24 +91,25 @@ export default function ProductList({
 
           <select
             value={selectedOrgId}
-            onChange={(e) =>
-              setSelectedOrgId(
-                e.target.value
-              )
-            }
+            onChange={(e) => setSelectedOrgId(e.target.value)}
             className="
-              rounded-2xl
-              border
-              border-gray-200
-              dark:border-white/10
-              bg-white
-              dark:bg-white/[0.04]
-              px-5
-              py-4
-              outline-none
-            "
+    rounded-2xl
+    border
+    border-gray-200
+    dark:border-white/10
+    bg-white
+    dark:bg-[#111827]
+    text-gray-900
+    dark:text-white
+    px-5
+    py-4
+    outline-none
+  "
           >
-            <option value="all">
+            <option
+              value="all"
+              className="bg-white text-gray-900 dark:bg-[#111827] dark:text-white"
+            >
               All Organizations
             </option>
 
@@ -127,6 +117,7 @@ export default function ProductList({
               <option
                 key={org._id}
                 value={org._id}
+                className="bg-white text-gray-900 dark:bg-[#111827] dark:text-white"
               >
                 {org.legalName}
               </option>
@@ -157,13 +148,10 @@ export default function ProductList({
           >
             <Package className="w-20 h-20 mx-auto text-gray-400 mb-5" />
 
-            <h3 className="text-3xl font-bold">
-              No Products Found
-            </h3>
+            <h3 className="text-3xl font-bold">No Products Found</h3>
 
             <p className="text-gray-500 dark:text-gray-400 mt-3">
-              Try adjusting your search
-              or add a new product.
+              Try adjusting your search or add a new product.
             </p>
           </div>
         ) : (
@@ -173,9 +161,7 @@ export default function ProductList({
             {products.map((product) => (
               <div
                 key={product._id}
-                onClick={() =>
-                  onSelect(product)
-                }
+                onClick={() => onSelect(product)}
                 className="
                   group
                   relative
@@ -216,24 +202,18 @@ export default function ProductList({
                       shrink-0
                     "
                   >
-                    {product.productName?.charAt(
-                      0
-                    )}
+                    {product.productName?.charAt(0)}
                   </div>
 
                   <div className="flex-1">
                     <h3 className="text-xl font-bold line-clamp-1">
-                      {
-                        product.productName
-                      }
+                      {product.productName}
                     </h3>
 
                     <div className="flex items-center gap-2 mt-2 text-sm text-gray-500 dark:text-gray-400">
                       <Building2 className="w-4 h-4" />
 
-                      <span>
-                        {product.orgName}
-                      </span>
+                      <span>{product.orgName}</span>
                     </div>
                   </div>
                 </div>
@@ -241,8 +221,7 @@ export default function ProductList({
                 {/* DESCRIPTION */}
 
                 <p className="text-sm leading-7 text-gray-600 dark:text-gray-300 line-clamp-3 min-h-[84px]">
-                  {product.description ||
-                    "No description available."}
+                  {product.description || "No description available."}
                 </p>
 
                 {/* FOOTER */}

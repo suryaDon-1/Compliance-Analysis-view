@@ -26,11 +26,15 @@ function App() {
           children: [
             {
               path: "/",
-              element: <Dashboard />,
+              element: <Signin/>
             },
             {
               path: "oraganization",
               element: <Organization />,
+            },
+            {
+              path: "dashboard",
+              element: <Dashboard/>,
             },
             {
               path: "products",

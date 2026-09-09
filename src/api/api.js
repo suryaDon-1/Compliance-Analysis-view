@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // instnce 
 const api =axios.create({
-    baseURL: "https://compliance-analysis-api.onrender.com/api", // backend api
+    // baseURL: "https://compliance-analysis-api.onrender.com/api", // backend api
+    baseURL: "https://compliance-analysis-api.onrender.com/api", //
     withCredentials: true // for cookies 
 });
 //request intersceptor 

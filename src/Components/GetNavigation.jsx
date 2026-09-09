@@ -9,7 +9,7 @@ export const GetNavigation = (user) => {
  // console.log(user, "user is user");
   return [
     {
-      segment: "",
+      segment: "dashboard",
       title: "Dashboard",
       icon: <DashboardIcon />,
     },
@@ -44,7 +44,7 @@ export const GetNavigation = (user) => {
     
    !user
   ? {
-      segment: "register",
+      segment: "",
       title: "Register",
       icon: <ExitToAppIcon />,
     }

@@ -1,5 +1,3 @@
-
-
 import {useState, useEffect, useRef} from "react";
 import {toast} from "react-toastify";
 import api from "../../api/api.js";
@@ -260,17 +258,17 @@ const TYPE_FIELDS = {
 // ─────────────────────────────────────────────
 
 const INPUT =
-  "w-full border border-zinc-300 rounded-xl px-4 py-3 outline-none";
+  "w-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white rounded-xl px-4 py-3 outline-none placeholder:text-zinc-500 dark:placeholder:text-zinc-400";
 
 const Card = ({title, children}) => (
-  <div className="bg-white border border-zinc-200 rounded-3xl p-6">
+  <div className="bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-700 rounded-3xl p-6">
     <h2 className="text-xl font-semibold mb-5">{title}</h2>
     {children}
   </div>
 );
 
 const CheckboxField = ({label, checked, onChange}) => (
-  <label className="flex items-center gap-3">
+  <label className="flex items-center gap-3 text-zinc-900 dark:text-white">
     <input type="checkbox" checked={checked} onChange={onChange} />
     <span>{label}</span>
   </label>
@@ -543,7 +541,7 @@ function AddProducts({onSuccess, onBack}) {
   }
 
   return (
-    <div className="p-6 space-y-6 bg-zinc-50 min-h-screen">
+    <div className="p-6 space-y-6 bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-white min-h-screen">
       {/* BASIC */}
       <Card title="Basic Information">
         <div className="grid md:grid-cols-2 gap-4">
@@ -632,7 +630,7 @@ function AddProducts({onSuccess, onBack}) {
             }
             className={INPUT}
           >
-            <option value="" >riskCategory</option>
+            <option value="">riskCategory</option>
             <option value="low">Low</option>
             <option value="medium">Medium</option>
             <option value="high">High</option>
